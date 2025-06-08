@@ -20,7 +20,7 @@ dependencies = [
     "google-cloud-aiplatform==1.36.0",
     "vertexai==0.0.1",
     # Weather and geospatial
-    "requests==2.31.0",
+    "requests==2.32.2",
     "geopy==2.3.0",
     "astral==3.2",      # For sun position calculations
     "numpy==1.24.3",    # For mathematical calculations
