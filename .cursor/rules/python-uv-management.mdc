@@ -1,0 +1,129 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Python Environment Management with UV
+
+## Overview
+This project **MUST** use UV for all Python environment and dependency management. UV is a fast Python package installer and resolver that provides better performance and reliability than pip.
+
+## Core Requirements
+
+### 1. Python Environment Setup
+- All Python environments MUST be managed using UV
+- Never use `pip`, `pipenv`, `poetry`, or `conda` directly
+- Always use `uv` commands for package installation and environment management
+
+### 2. Project Configuration Files
+- Use `pyproject.toml` for project configuration and dependencies
+- Include UV-specific configuration in `pyproject.toml`
+- Maintain `uv.lock` file for reproducible builds (commit to version control)
+
+### 3. Dependency Management Commands
+```bash
+# Install dependencies
+uv sync
+
+# Add new dependency
+uv add <package-name>
+
+# Add development dependency
+uv add --dev <package-name>
+
+# Remove dependency
+uv remove <package-name>
+
+# Update all dependencies
+uv sync --upgrade
+
+# Install specific version
+uv add "package-name==1.2.3"
+```
+
+### 4. Virtual Environment Commands
+```bash
+# Create and activate virtual environment
+uv venv
+source .venv/bin/activate  # On Unix/macOS
+.venv\Scripts\activate     # On Windows
+
+# Run commands in virtual environment
+uv run <command>
+
+# Python interpreter in virtual environment
+uv run python
+uv run python -m <module>
+```
+
+### 5. Development Workflow
+- Always run `uv sync` after pulling changes
+- Use `uv run` prefix for all Python commands in development
+- Update `uv.lock` when adding/removing dependencies
+- Ensure `.venv/` is in `.gitignore`
+
+### 6. CI/CD Integration
+- Use UV in all GitHub Actions and CI/CD pipelines
+- Cache UV dependencies for faster builds
+- Use `uv sync --frozen` in production deployments
+
+### 7. Backend Agent Requirements
+For the Rainbow Finder backend agents in [rainbow-finder/backend/agents/](mdc:rainbow-finder/backend/agents/):
+- Each agent directory should have its own `pyproject.toml` if needed
+- Use UV for managing agent-specific dependencies
+- Shared dependencies should be managed at the project root level
+
+### 8. Forbidden Practices
+❌ **NEVER** use these commands:
+- `pip install`
+- `pip freeze`
+- `python -m pip`
+- `poetry install`
+- `pipenv install`
+- `conda install`
+
+✅ **ALWAYS** use UV equivalents:
+- `uv add` instead of `pip install`
+- `uv sync` for environment setup
+- `uv run` for executing Python commands
+
+### 9. Project Structure Requirements
+```
+project-root/
+├── pyproject.toml          # Main project configuration
+├── uv.lock                 # Lock file (commit to git)
+├── .venv/                  # Virtual environment (ignore in git)
+├── .gitignore              # Must include .venv/
+└── README.md               # Include UV setup instructions
+```
+
+### 10. IDE Integration
+- Configure your IDE to use the UV-managed Python interpreter
+- Path should be `.venv/bin/python` (Unix/macOS) or `.venv\Scripts\python.exe` (Windows)
+- Ensure IDE recognizes UV lock file for dependency resolution
+
+### 11. Documentation Requirements
+- All README files must include UV setup instructions
+- Document UV commands in developer onboarding
+- Include UV version requirements in documentation
+
+### 12. ROO CODE Integration
+This rule is available to ROO CODE systems for:
+- Automated environment validation
+- CI/CD pipeline configuration
+- Developer tooling setup
+- Code quality checks
+
+## Enforcement
+- All Python-related pull requests must use UV
+- CI/CD should fail if non-UV package management detected
+- Regular audits of dependency management practices
+- Developer training on UV usage patterns
+
+## Migration Guide
+If migrating from other tools:
+1. Remove existing `requirements.txt`, `Pipfile`, or `poetry.lock`
+2. Create `pyproject.toml` with dependencies
+3. Run `uv sync` to create UV environment
+4. Update all scripts and documentation
+5. Train team on UV commands and workflows

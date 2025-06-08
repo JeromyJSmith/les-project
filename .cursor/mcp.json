@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "context7": {
+      "url": "npx -y @upstash/context7-mcp@latest"
+    },
+    "google Docs": {
+      "url": "https://gitmcp.io/github.com/google/adk-python"
+    }
+  }
+}

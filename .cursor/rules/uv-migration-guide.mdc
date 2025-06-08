@@ -1,0 +1,174 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# UV Migration Guide - Rainbow Finder Backend
+
+## Migration Steps from requirements.txt to UV
+
+### 1. Pre-Migration Checklist
+- [ ] Backup current [requirements.txt](mdc:rainbow-finder/backend/requirements.txt)
+- [ ] Ensure UV is installed: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- [ ] Verify UV version: `uv --version`
+
+### 2. Migration Process
+
+#### Step 1: Initialize UV Project
+```bash
+cd rainbow-finder/backend
+uv init --name rainbow-finder-backend
+```
+
+#### Step 2: Remove Old Virtual Environment
+```bash
+# If using existing venv/virtualenv
+rm -rf venv/ .venv/ env/
+```
+
+#### Step 3: Create UV Virtual Environment
+```bash
+uv venv
+source .venv/bin/activate  # Unix/macOS
+# or
+.venv\Scripts\activate     # Windows
+```
+
+#### Step 4: Install Dependencies from Existing requirements.txt
+```bash
+uv add -r requirements.txt
+```
+
+#### Step 5: Verify Dependencies
+```bash
+uv sync
+uv run python -c "import fastapi; print('FastAPI imported successfully')"
+```
+
+#### Step 6: Test Agent Functionality
+```bash
+# Test notification agent imports
+cd [rainbow-finder/backend/agents/notification/](mdc:rainbow-finder/backend/agents/notification/)
+uv run python -c "from agent import notification_agent; print('Agent imported successfully')"
+```
+
+### 3. Post-Migration Steps
+
+#### Update Development Scripts
+Replace any scripts using pip with UV:
+
+```bash
+# Old: pip install package-name
+# New: uv add package-name
+
+# Old: pip install -r requirements.txt
+# New: uv sync
+
+# Old: python script.py
+# New: uv run python script.py
+```
+
+#### Update README Instructions
+Update [rainbow-finder/backend/README.md](mdc:rainbow-finder/backend/README.md) with UV commands:
+
+```markdown
+## Setup
+1. Install UV: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+2. Create environment: `uv venv`
+3. Install dependencies: `uv sync`
+4. Run application: `uv run python main.py`
+```
+
+### 4. Verification Checklist
+
+- [ ] [pyproject.toml](mdc:rainbow-finder/backend/pyproject.toml) exists and is valid
+- [ ] `uv.lock` file is generated
+- [ ] [.gitignore](mdc:rainbow-finder/.gitignore) excludes `.venv/`
+- [ ] Old `requirements.txt` is removed
+- [ ] All imports work with `uv run python -c "import module"`
+- [ ] Tests pass with `uv run pytest`
+- [ ] Linting works with `uv run black . && uv run isort . && uv run flake8`
+
+### 5. Team Migration
+
+#### For New Team Members
+```bash
+git clone <repository>
+cd rainbow-finder/backend
+uv sync                    # Install all dependencies
+uv run python main.py     # Start application
+```
+
+#### For Existing Team Members
+```bash
+git pull origin main
+rm -rf .venv/             # Remove old virtual environment
+uv sync                   # Recreate with UV
+```
+
+### 6. CI/CD Updates
+
+Update GitHub Actions to use UV:
+```yaml
+- name: Set up Python
+  uses: actions/setup-python@v4
+  with:
+    python-version: '3.9'
+
+- name: Install UV
+  run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+- name: Install dependencies
+  run: uv sync
+
+- name: Run tests
+  run: uv run pytest
+```
+
+### 7. Rollback Plan (if needed)
+
+If migration causes issues:
+```bash
+# Keep old requirements.txt as backup
+cp requirements.txt requirements.txt.backup
+
+# Restore using pip if needed
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt.backup
+```
+
+### 8. Performance Benefits
+
+After migration, expect:
+- ⚡ Faster dependency resolution
+- 🔒 Better dependency locking
+- 📦 Reduced storage usage
+- 🚀 Improved CI/CD performance
+
+### 9. Troubleshooting
+
+Common issues and solutions:
+
+#### "uv: command not found"
+```bash
+# Reinstall UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source ~/.bashrc  # or ~/.zshrc
+```
+
+#### "Module not found" errors
+```bash
+# Ensure you're in UV environment
+uv sync
+uv run python -c "import sys; print(sys.path)"
+```
+
+#### Lock file conflicts
+```bash
+# Regenerate lock file
+rm uv.lock
+uv sync
+```
+
+This migration guide ensures a smooth transition to UV while maintaining all functionality of the Rainbow Finder backend system.

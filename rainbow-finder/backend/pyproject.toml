@@ -1,0 +1,117 @@
+[project]
+name = "rainbow-finder-backend"
+version = "0.1.0"
+description = "Rainbow Finder Backend - AI-powered rainbow prediction system"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "Rainbow Finder Team" }
+]
+license = { text = "MIT" }
+
+dependencies = [
+    # Core dependencies
+    "fastapi==0.95.2",
+    "uvicorn==0.22.0",
+    "pydantic==1.10.8",
+    "python-dotenv==1.0.0",
+    "sqlalchemy==2.0.15",
+    # Google ADK dependencies
+    "google-cloud-aiplatform==1.36.0",
+    "vertexai==0.0.1",
+    # Weather and geospatial
+    "requests==2.31.0",
+    "geopy==2.3.0",
+    "astral==3.2",      # For sun position calculations
+    "numpy==1.24.3",    # For mathematical calculations
+    "scipy==1.10.1",    # For scientific computing
+    "pandas==2.0.2",    # For data processing
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing
+    "pytest==7.3.1",
+    "pytest-cov==4.1.0",
+    # Development tools
+    "black==23.3.0",
+    "isort==5.12.0",
+    "flake8==6.0.0",
+    "mypy==1.3.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.3.1",
+    "pytest-cov>=4.1.0",
+    "black>=23.3.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.3.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["agents", "api", "services", "shared", "utils"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+addopts = "--cov=agents --cov=api --cov=services --cov=utils --cov-report=term-missing --cov-report=html"
+
+[tool.coverage.run]
+source = ["agents", "api", "services", "utils"]
+omit = ["*/tests/*", "*/test_*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+] 

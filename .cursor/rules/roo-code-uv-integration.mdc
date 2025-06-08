@@ -1,0 +1,95 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# ROO CODE - UV Python Environment Integration
+
+## ROO CODE System Integration
+This rule provides automated validation and integration patterns for UV-based Python environment management.
+
+## Automated Validation Points
+
+### 1. Environment Detection
+ROO CODE should validate:
+- Presence of `pyproject.toml` in Python projects
+- Existence of `uv.lock` file for dependency locking
+- `.venv/` directory is properly gitignored
+- No legacy dependency files (`requirements.txt`, `Pipfile`, `poetry.lock`)
+
+### 2. Command Validation
+Block or warn on these deprecated commands:
+```bash
+# Forbidden commands to flag
+pip install
+pip freeze
+python -m pip install
+poetry install
+pipenv install
+conda install
+```
+
+### 3. Required File Patterns
+ROO CODE should ensure these files exist:
+- [pyproject.toml](mdc:pyproject.toml) - Project configuration
+- [uv.lock](mdc:uv.lock) - Dependency lock file
+- [.gitignore](mdc:.gitignore) - Must exclude `.venv/`
+
+### 4. Agent-Specific Validation
+For Rainbow Finder backend agents in [rainbow-finder/backend/agents/](mdc:rainbow-finder/backend/agents/):
+- Validate UV usage in [notification/agent.py](mdc:rainbow-finder/backend/agents/notification/agent.py)
+- Check import statements use UV-managed packages
+- Ensure development dependencies are properly declared
+
+### 5. CI/CD Integration Checks
+ROO CODE should validate:
+- GitHub Actions use UV commands
+- Docker files use UV for Python setup
+- Deployment scripts reference `uv sync --frozen`
+
+### 6. Development Workflow Automation
+ROO CODE can automate:
+- Running `uv sync` after git pulls
+- Checking for outdated dependencies with `uv outdated`
+- Validating lock file consistency
+
+### 7. Quality Gates
+Before code commits, validate:
+- No direct pip usage in code or scripts
+- UV lock file is up-to-date
+- Virtual environment matches lock file
+- All Python imports can be resolved via UV
+
+### 8. Error Messages
+When violations detected, ROO CODE should provide:
+- Clear error messages pointing to UV alternatives
+- Links to UV documentation
+- Suggested fix commands
+
+## Integration Commands
+```python
+# Example ROO CODE validation functions
+def validate_uv_usage():
+    """Validate project uses UV for Python management"""
+    check_pyproject_exists()
+    check_lock_file_current()
+    check_no_legacy_files()
+    validate_gitignore_patterns()
+
+def suggest_uv_migration():
+    """Suggest migration from legacy tools to UV"""
+    if has_requirements_txt():
+        return "Run: uv add -r requirements.txt && rm requirements.txt"
+    if has_poetry_lock():
+        return "Migrate: poetry export | uv add -r /dev/stdin"
+    return "Initialize: uv init && uv add <dependencies>"
+```
+
+## Monitoring and Reporting
+ROO CODE should track:
+- UV adoption across Python projects
+- Performance improvements from UV usage
+- Dependency vulnerability scans via UV
+- Build time improvements
+
+This rule enables ROO CODE to automatically enforce UV usage patterns and help maintain consistent Python environment management across the Rainbow Finder project.
