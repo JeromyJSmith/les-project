@@ -17,7 +17,7 @@ dependencies = [
     "python-dotenv==1.0.0",
     "sqlalchemy==2.0.15",
     # Google ADK dependencies
-    "google-cloud-aiplatform==1.36.0",
+    "google-cloud-aiplatform==1.133.0",
     "vertexai==0.0.1",
     # Weather and geospatial
     "requests==2.31.0",
